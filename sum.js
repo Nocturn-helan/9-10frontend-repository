@@ -30,3 +30,40 @@ console.log('清洗后：', cleanRecords(records));
 console.log('平均单笔：', average(cleanRecords(records)));
 console.log('最大单笔：', highest(cleanRecords(records)));
 console.log('超支名单：', overspent(cleanRecords(records)));
+
+
+
+// 等级判定（单值进单值出，纯函数）
+const toGrade = (amount) => {
+  if (amount >= 5000) return 'A';
+  if (amount >= 2000) return 'B';
+  if (amount >= 1000) return 'C';
+  if (amount >= 500)  return 'D';
+  return 'F';
+};
+
+// 各等级笔数统计
+const gradeCount = (list) => {
+  const result = { A: 0, B: 0, C: 0, D: 0, F: 0 };
+  list.forEach(r => { result[toGrade(r.amount)]++; });
+  return result;
+};
+
+// 格式化报告
+const report = (list) => {
+  const valid = cleanRecords(list);
+  if (valid.length === 0) {
+    return '没有有效收支记录';
+  }
+  const dist = gradeCount(valid);
+  const top = highest(valid);
+  return `有效记录${valid.length}笔，平均单笔${average(valid)}元，最大单笔${top.amount}元（${top.name}）；
+等级分布：A${dist.A}笔 B${dist.B}笔 C${dist.C}笔 D${dist.D}笔 F${dist.F}笔；
+超支名单：${overspent(valid).join('、') || '无'}`;
+};
+
+try {
+  console.log(report(records));
+} catch (err) {
+  console.error('报告生成失败：', err.message);
+}
