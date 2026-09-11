@@ -10,3 +10,23 @@ const records = [
   { name: '分红',     type: 'income',  amount: 200000 }   // 单笔超出上限
 ];
 
+// 清洗：只保留 0 至 100000 之间的合法金额
+const cleanRecords = (list) => list.filter(r => r.amount > 0 && r.amount <= 100000);
+
+// 平均单笔
+const average = (list) => {
+  if (list.length === 0) return 0;   // 空数组保护，除零会产生 NaN
+  const total = list.reduce((sum, r) => sum + r.amount, 0);
+  return (total / list.length).toFixed(2);
+};
+
+// 最大单笔
+const highest = (list) => list.reduce((max, r) => r.amount > max.amount ? r : max, list[0]);
+
+// 超支名单（单笔支出超过 1000 元）
+const overspent = (list) => list.filter(r => r.type === 'expense' && r.amount > 1000).map(r => r.name);
+
+console.log('清洗后：', cleanRecords(records));
+console.log('平均单笔：', average(cleanRecords(records)));
+console.log('最大单笔：', highest(cleanRecords(records)));
+console.log('超支名单：', overspent(cleanRecords(records)));
